@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  influxdb:
+    image: influxdb:2.7.11
+    ports:
+      - '8086:8086'
+    volumes:
+      - ./influxdb/data/:/var/lib/influxdb
+      - ./influxdb/influx_init.iql:/docker-entrypoint-initdb.d/influx_init.iql
+      - ./influxdb/config/:/etc/influxdb/
+
+  grafana:
+    image: grafana/grafana:11.3.0
+    ports:
+      - '3000:3000'
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana-provisioning/:/etc/grafana/provisioning/
+    depends_on:
+      - influxdb
+    env_file:
+      - 'grafana.env'
+
+volumes:
+  influxdb-storage:
+  grafana-storage:
+
+
+
+#environment:
+# - GF_SECURITY_ADMIN_USER=juanc
+# - GF_SECURITY_ADMIN_PASSWORD=juanc
+# - credentiales: juanc/1227
